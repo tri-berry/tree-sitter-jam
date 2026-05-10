@@ -2671,18 +2671,6 @@
           }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "match_else_arm"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
           "type": "STRING",
           "value": "}"
         }
@@ -2698,23 +2686,6 @@
             "type": "SYMBOL",
             "name": "_pattern"
           }
-        },
-        {
-          "type": "FIELD",
-          "name": "body",
-          "content": {
-            "type": "SYMBOL",
-            "name": "match_arm_body"
-          }
-        }
-      ]
-    },
-    "match_else_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "else"
         },
         {
           "type": "FIELD",

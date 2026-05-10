@@ -194,7 +194,7 @@ fn run(op: Op) {
     match (op) {
         Op.Nop { return; }
         Op.LdR8R8(dst, src) { return; }
-        else { return; }
+        _ { return; }
     }
 }
 
@@ -226,7 +226,8 @@ fn run(op: Op) {
               bindings: (identifier))
             body: (match_arm_body
               (return_statement)))
-          (match_else_arm
+          (match_arm
+            pattern: (wildcard_pattern)
             body: (match_arm_body
               (return_statement))))))))
 

@@ -532,7 +532,8 @@ module.exports = grammar({
     },
 
     // Match — used both as a statement (no value) and as an expression
-    // (value is the chosen arm's last expression).
+    // (value is the chosen arm's last expression). The catch-all is the
+    // wildcard pattern `_`; there is no `else` arm.
     match_expression: $ => seq(
       'match',
       '(',
@@ -540,17 +541,11 @@ module.exports = grammar({
       ')',
       '{',
       repeat($.match_arm),
-      optional($.match_else_arm),
       '}'
     ),
 
     match_arm: $ => seq(
       field('pattern', $._pattern),
-      field('body', $.match_arm_body)
-    ),
-
-    match_else_arm: $ => seq(
-      'else',
       field('body', $.match_arm_body)
     ),
 

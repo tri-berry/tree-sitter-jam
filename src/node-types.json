@@ -1094,22 +1094,6 @@
     }
   },
   {
-    "type": "match_else_arm",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "match_arm_body",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "match_expression",
     "named": true,
     "fields": {
@@ -1130,10 +1114,6 @@
       "types": [
         {
           "type": "match_arm",
-          "named": true
-        },
-        {
-          "type": "match_else_arm",
           "named": true
         }
       ]
