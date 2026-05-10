@@ -17,13 +17,11 @@ fn test() {
     body: (block
       (variable_declaration
         name: (identifier)
-        type: (type
-          (primitive_type))
+        type: (primitive_type)
         value: (number_literal))
       (variable_declaration
         name: (identifier)
-        type: (type
-          (primitive_type))
+        type: (primitive_type)
         value: (number_literal))
       (variable_declaration
         name: (identifier)
@@ -48,11 +46,11 @@ fn test() {
     body: (block
       (if_statement
         condition: (binary_expression
-          (identifier)
-          (number_literal))
+          left: (identifier)
+          right: (number_literal))
         consequence: (block
           (return_statement
-            (number_literal)))))))
+            value: (number_literal)))))))
 
 ================================================================================
 If-else statement
@@ -75,14 +73,14 @@ fn test() {
     body: (block
       (if_statement
         condition: (binary_expression
-          (identifier)
-          (number_literal))
+          left: (identifier)
+          right: (number_literal))
         consequence: (block
           (return_statement
-            (number_literal)))
+            value: (number_literal)))
         alternative: (block
           (return_statement
-            (number_literal)))))))
+            value: (number_literal)))))))
 
 ================================================================================
 While loop
@@ -103,15 +101,14 @@ fn test() {
     body: (block
       (while_statement
         condition: (binary_expression
-          (identifier)
-          (number_literal))
+          left: (identifier)
+          right: (number_literal))
         body: (block
-          (expression_statement
-            (assignment_expression
+          (assignment_statement
+            left: (identifier)
+            right: (binary_expression
               left: (identifier)
-              right: (binary_expression
-                (identifier)
-                (number_literal)))))))))
+              right: (number_literal))))))))
 
 ================================================================================
 For loop
@@ -138,6 +135,102 @@ fn test() {
           (break_statement))))))
 
 ================================================================================
+Match statement with ranges and alternation
+================================================================================
+
+fn dispatch(opcode: u8) {
+    match (opcode) {
+        0x00 { return; }
+        0x01 | 0x11 | 0x21 { return; }
+        0x40..=0x7F { return; }
+        _ { return; }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (primitive_type)))
+    body: (block
+      (expression_statement
+        (match_expression
+          scrutinee: (identifier)
+          (match_arm
+            pattern: (literal_pattern
+              (number_literal))
+            body: (match_arm_body
+              (return_statement)))
+          (match_arm
+            pattern: (or_pattern
+              (literal_pattern
+                (number_literal))
+              (literal_pattern
+                (number_literal))
+              (literal_pattern
+                (number_literal)))
+            body: (match_arm_body
+              (return_statement)))
+          (match_arm
+            pattern: (range_pattern
+              start: (number_literal)
+              end: (number_literal))
+            body: (match_arm_body
+              (return_statement)))
+          (match_arm
+            pattern: (wildcard_pattern)
+            body: (match_arm_body
+              (return_statement))))))))
+
+================================================================================
+Match with enum-variant pattern + payload bindings
+================================================================================
+
+fn run(op: Op) {
+    match (op) {
+        Op.Nop { return; }
+        Op.LdR8R8(dst, src) { return; }
+        else { return; }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (named_type
+          (identifier))))
+    body: (block
+      (expression_statement
+        (match_expression
+          scrutinee: (identifier)
+          (match_arm
+            pattern: (enum_variant_pattern
+              enum: (identifier)
+              variant: (identifier))
+            body: (match_arm_body
+              (return_statement)))
+          (match_arm
+            pattern: (enum_variant_pattern
+              enum: (identifier)
+              variant: (identifier)
+              bindings: (identifier)
+              bindings: (identifier))
+            body: (match_arm_body
+              (return_statement)))
+          (match_else_arm
+            body: (match_arm_body
+              (return_statement))))))))
+
+================================================================================
 Break and continue
 ================================================================================
 
@@ -160,3 +253,20 @@ fn test() {
         body: (block
           (break_statement)
           (continue_statement))))))
+
+================================================================================
+Bare return
+================================================================================
+
+fn test() {
+    return;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement))))

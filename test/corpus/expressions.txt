@@ -15,7 +15,7 @@ fn test() {
     body: (block
       (expression_statement
         (call_expression
-          function: (identifier)
+          callee: (identifier)
           arguments: (argument_list
             (string_literal)))))))
 
@@ -36,13 +36,183 @@ fn test() {
     body: (block
       (expression_statement
         (call_expression
-          function: (member_expression
+          callee: (member_expression
             object: (member_expression
               object: (identifier)
               member: (identifier))
             member: (identifier))
           arguments: (argument_list
             (string_literal)))))))
+
+================================================================================
+Address-of and pointer deref
+================================================================================
+
+fn test() {
+    var x: u32 = 5;
+    var p: *mut u32 = &x;
+    return p.*;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (variable_declaration
+        name: (identifier)
+        type: (primitive_type)
+        value: (number_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (pointer_type
+          element: (primitive_type))
+        value: (address_of_expression
+          value: (identifier)))
+      (return_statement
+        value: (deref_expression
+          pointer: (identifier))))))
+
+================================================================================
+Struct literal
+================================================================================
+
+fn test() {
+    var p: Point = { x: 10, y: 20 };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (variable_declaration
+        name: (identifier)
+        type: (named_type
+          (identifier))
+        value: (struct_literal
+          (struct_literal_field
+            name: (identifier)
+            value: (number_literal))
+          (struct_literal_field
+            name: (identifier)
+            value: (number_literal)))))))
+
+================================================================================
+Array literal forms
+================================================================================
+
+fn test() {
+    var a: [4]u8 = [10, 20, 30, 40];
+    var b: [16]u8 = [0; 16];
+    var c: []u8 = [];
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (variable_declaration
+        name: (identifier)
+        type: (array_type
+          size: (number_literal)
+          element: (primitive_type))
+        value: (array_literal
+          (number_literal)
+          (number_literal)
+          (number_literal)
+          (number_literal)))
+      (variable_declaration
+        name: (identifier)
+        type: (array_type
+          size: (number_literal)
+          element: (primitive_type))
+        value: (array_repeat_literal
+          value: (number_literal)
+          count: (number_literal)))
+      (variable_declaration
+        name: (identifier)
+        type: (slice_type
+          element: (primitive_type))
+        value: (array_literal)))))
+
+================================================================================
+As cast
+================================================================================
+
+fn test() u8 {
+    var x: u32 = 5;
+    return x as u8;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (primitive_type)
+    body: (block
+      (variable_declaration
+        name: (identifier)
+        type: (primitive_type)
+        value: (number_literal))
+      (return_statement
+        value: (cast_expression
+          value: (identifier)
+          type: (primitive_type))))))
+
+================================================================================
+Hex / binary / octal / float literals
+================================================================================
+
+fn test() {
+    const a: u32 = 0xCAFEBABE;
+    const b: u8  = 0b1010_0011;
+    const c: u8  = 0o755;
+    const d: f64 = 3.14;
+    const e: f32 = 1.5e10;
+    const f: f64 = 0x1.5p3;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (variable_declaration
+        name: (identifier)
+        type: (primitive_type)
+        value: (number_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (primitive_type)
+        value: (number_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (primitive_type)
+        value: (number_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (primitive_type)
+        value: (number_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (primitive_type)
+        value: (number_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (primitive_type)
+        value: (number_literal)))))
 
 ================================================================================
 String with escape sequences
@@ -61,12 +231,100 @@ fn test() {
     body: (block
       (expression_statement
         (call_expression
-          function: (identifier)
+          callee: (identifier)
           arguments: (argument_list
             (string_literal
               (escape_sequence)
               (escape_sequence)
               (escape_sequence))))))))
+
+================================================================================
+Logical operators (and / or / not)
+================================================================================
+
+fn test() bool {
+    return !(a and b) or c;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (primitive_type)
+    body: (block
+      (return_statement
+        value: (binary_expression
+          left: (unary_expression
+            operand: (parenthesized_expression
+              (binary_expression
+                left: (identifier)
+                right: (identifier))))
+          right: (identifier))))))
+
+================================================================================
+Bitwise and shift operators
+================================================================================
+
+fn test() u32 {
+    return (a & b) | (c ^ d) << 2 >> 1;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (primitive_type)
+    body: (block
+      (return_statement
+        value: (binary_expression
+          left: (parenthesized_expression
+            (binary_expression
+              left: (identifier)
+              right: (identifier)))
+          right: (binary_expression
+            left: (binary_expression
+              left: (parenthesized_expression
+                (binary_expression
+                  left: (identifier)
+                  right: (identifier)))
+              right: (number_literal))
+            right: (number_literal)))))))
+
+================================================================================
+Indexing
+================================================================================
+
+fn test() u8 {
+    var arr: [4]u8 = [1, 2, 3, 4];
+    return arr[2];
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (primitive_type)
+    body: (block
+      (variable_declaration
+        name: (identifier)
+        type: (array_type
+          size: (number_literal)
+          element: (primitive_type))
+        value: (array_literal
+          (number_literal)
+          (number_literal)
+          (number_literal)
+          (number_literal)))
+      (return_statement
+        value: (index_expression
+          object: (identifier)
+          index: (number_literal))))))
 
 ================================================================================
 Comments
@@ -81,13 +339,12 @@ fn main() u8 {
 --------------------------------------------------------------------------------
 
 (source_file
-  (comment)
+  (line_comment)
   (function_declaration
     name: (identifier)
     parameters: (parameter_list)
-    return_type: (type
-      (primitive_type))
+    return_type: (primitive_type)
     body: (block
-      (comment)
+      (line_comment)
       (return_statement
-        (number_literal)))))
+        value: (number_literal)))))

@@ -12,6 +12,20 @@ const std = import("std");
     path: (string_literal)))
 
 ================================================================================
+Destructuring import
+================================================================================
+
+const { assert, equals } = import("test");
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (destructuring_import_declaration
+    names: (identifier)
+    names: (identifier)
+    path: (string_literal)))
+
+================================================================================
 Simple function
 ================================================================================
 
@@ -25,11 +39,10 @@ fn main() u8 {
   (function_declaration
     name: (identifier)
     parameters: (parameter_list)
-    return_type: (type
-      (primitive_type))
+    return_type: (primitive_type)
     body: (block
       (return_statement
-        (number_literal)))))
+        value: (number_literal)))))
 
 ================================================================================
 Function with parameters
@@ -47,19 +60,43 @@ fn add(a: i32, b: i32) i32 {
     parameters: (parameter_list
       (parameter
         name: (identifier)
-        type: (type
-          (primitive_type)))
+        type: (primitive_type))
       (parameter
         name: (identifier)
-        type: (type
-          (primitive_type))))
-    return_type: (type
-      (primitive_type))
+        type: (primitive_type)))
+    return_type: (primitive_type)
     body: (block
       (return_statement
-        (binary_expression
-          (identifier)
-          (identifier))))))
+        value: (binary_expression
+          left: (identifier)
+          right: (identifier))))))
+
+================================================================================
+Mut and move parameter modes
+================================================================================
+
+fn modify(x: mut u32, y: move u8) u32 {
+    return 0;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        mode: (parameter_mode)
+        type: (primitive_type))
+      (parameter
+        name: (identifier)
+        mode: (parameter_mode)
+        type: (primitive_type)))
+    return_type: (primitive_type)
+    body: (block
+      (return_statement
+        value: (number_literal)))))
 
 ================================================================================
 Extern function
@@ -75,10 +112,34 @@ extern fn puts(s: str) i32;
     parameters: (parameter_list
       (parameter
         name: (identifier)
-        type: (type
-          (primitive_type))))
-    return_type: (type
-      (primitive_type))))
+        type: (primitive_type)))
+    return_type: (primitive_type)))
+
+================================================================================
+Extern variadic
+================================================================================
+
+extern fn snprintf(buf: *mut[] u8, size: u64, fmt: *const[] u8, ...) i32;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (pointer_type
+          element: (primitive_type)))
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier)
+        type: (pointer_type
+          element: (primitive_type)))
+      (variadic_parameter))
+    return_type: (primitive_type)))
 
 ================================================================================
 Export function
@@ -94,3 +155,180 @@ export fn hello() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block)))
+
+================================================================================
+Test function
+================================================================================
+
+tfn additionWorks() {
+    return;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement))))
+
+================================================================================
+Struct definition
+================================================================================
+
+const Point = struct {
+    x: u32,
+    y: u32,
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    name: (identifier)
+    value: (struct_definition
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type))
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type)))))
+
+================================================================================
+Struct with method
+================================================================================
+
+const Counter = struct {
+    n: u32,
+    fn drop(self: mut Counter) {
+        return;
+    }
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    name: (identifier)
+    value: (struct_definition
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type))
+      (method_declaration
+        (function_declaration
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              mode: (parameter_mode)
+              type: (named_type
+                (identifier))))
+          body: (block
+            (return_statement)))))))
+
+================================================================================
+Union definition
+================================================================================
+
+const Bits = union {
+    i: u32,
+    f: f32,
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    name: (identifier)
+    value: (union_definition
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type))
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type)))))
+
+================================================================================
+Enum definition with payloads
+================================================================================
+
+const Op = enum {
+    Nop,
+    LdR8R8(u8, u8),
+    Jp(u16),
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    name: (identifier)
+    value: (enum_definition
+      (enum_variant
+        name: (identifier))
+      (enum_variant
+        name: (identifier)
+        (primitive_type)
+        (primitive_type))
+      (enum_variant
+        name: (identifier)
+        (primitive_type)))))
+
+================================================================================
+Module constant
+================================================================================
+
+const MAX: u32 = 64;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    name: (identifier)
+    type: (primitive_type)
+    value: (number_literal)))
+
+================================================================================
+Generic type alias
+================================================================================
+
+const FileMaybe = Maybe(File);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    name: (identifier)
+    value: (call_expression
+      callee: (identifier)
+      arguments: (argument_list
+        (identifier)))))
+
+================================================================================
+Generic type-returning function
+================================================================================
+
+fn Box(T: type) type {
+    return struct {
+        value: T,
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (primitive_type)))
+    return_type: (primitive_type)
+    body: (block
+      (return_statement
+        value: (struct_expression
+          (field_declaration
+            name: (identifier)
+            type: (named_type
+              (identifier))))))))
