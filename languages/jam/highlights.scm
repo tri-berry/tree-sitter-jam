@@ -28,10 +28,10 @@
 
 ; Function calls
 (call_expression
-  function: (identifier) @function.call)
+  callee: (identifier) @function.call)
 
 (call_expression
-  function: (member_expression
+  callee: (member_expression
     member: (identifier) @function.call))
 
 ; Parameters
@@ -86,4 +86,4 @@
 (escape_sequence) @string.escape
 
 ; Comments
-(comment) @comment
+(line_comment) @comment
