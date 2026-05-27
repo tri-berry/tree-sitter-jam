@@ -156,8 +156,8 @@ module.exports = grammar({
     // ---- Functions ---------------------------------------------------------
 
     function_declaration: $ => seq(
-      optional(field('visibility', choice('extern', 'export', 'pub'))),
-      choice('fn', 'tfn'),
+      repeat(field('modifier', choice('extern', 'export', 'pub'))),
+      choice('fn', 'tfn', 'cfn'),
       field('name', $.identifier),
       field('parameters', $.parameter_list),
       optional(field('return_type', $._type)),
@@ -430,8 +430,15 @@ module.exports = grammar({
     index_expression: $ => prec.left(8, seq(
       field('object', $._expression),
       '[',
-      field('index', $._expression),
+      field('index', choice($._expression, $.range_expression)),
       ']'
+    )),
+
+    // Half-open range `start..end`, used for slicing: `buf[0..len]`.
+    range_expression: $ => prec.left(seq(
+      field('start', $._expression),
+      '..',
+      field('end', $._expression)
     )),
 
     // Pointer dereference — `p.*`. Distinct from member_expression because
@@ -581,10 +588,10 @@ module.exports = grammar({
       field('end', seq(optional('-'), $.number_literal))
     ),
 
-    // `EnumName.Variant` or `EnumName.Variant(b1, b2, ...)`.
+    // `Variant`, `Variant(b1, ...)`, `EnumName.Variant`, or
+    // `EnumName.Variant(b1, b2, ...)`. The `EnumName.` qualifier is optional.
     enum_variant_pattern: $ => seq(
-      field('enum', $.identifier),
-      '.',
+      optional(seq(field('enum', $.identifier), '.')),
       field('variant', $.identifier),
       optional(seq(
         '(',

@@ -744,7 +744,7 @@
       },
       "enum": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -865,6 +865,24 @@
           }
         ]
       },
+      "modifier": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "export",
+            "named": false
+          },
+          {
+            "type": "extern",
+            "named": false
+          },
+          {
+            "type": "pub",
+            "named": false
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -892,24 +910,6 @@
           {
             "type": "_type",
             "named": true
-          }
-        ]
-      },
-      "visibility": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "export",
-            "named": false
-          },
-          {
-            "type": "extern",
-            "named": false
-          },
-          {
-            "type": "pub",
-            "named": false
           }
         ]
       }
@@ -1017,6 +1017,10 @@
         "types": [
           {
             "type": "_expression",
+            "named": true
+          },
+          {
+            "type": "range_expression",
             "named": true
           }
         ]
@@ -1330,6 +1334,32 @@
     "type": "primitive_type",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "range_expression",
+    "named": true,
+    "fields": {
+      "end": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "start": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "range_pattern",
@@ -1681,6 +1711,10 @@
     "named": false
   },
   {
+    "type": "..",
+    "named": false
+  },
+  {
     "type": "..=",
     "named": false
   },
@@ -1750,6 +1784,10 @@
   },
   {
     "type": "break",
+    "named": false
+  },
+  {
+    "type": "cfn",
     "named": false
   },
   {

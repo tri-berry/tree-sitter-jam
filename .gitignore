@@ -36,3 +36,7 @@ dist/
 *.wasm
 *.obj
 *.o
+
+# Zed dev-extension build artifacts (cloned grammar + compiled wasm)
+/grammars/
+editors/zed/grammars/
