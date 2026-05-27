@@ -1,0 +1,6 @@
+name = "Jam"
+grammar = "jam"
+path_suffixes = ["jam"]
+line_comments = ["//"]
+tab_size = 4
+hard_tabs = false
