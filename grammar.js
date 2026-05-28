@@ -48,8 +48,9 @@ module.exports = grammar({
       $.function_declaration,
     ),
 
-    // `const std = import("std");`
+    // `const std = import("std");` (optionally `pub` to re-export).
     import_declaration: $ => seq(
+      optional(field('modifier', 'pub')),
       'const',
       field('name', $.identifier),
       '=',
@@ -61,6 +62,7 @@ module.exports = grammar({
     ),
 
     // `const { a, b } = import("mod");`
+    // Upstream rejects `pub` on this form, so no modifier here.
     destructuring_import_declaration: $ => seq(
       'const',
       '{',
@@ -80,7 +82,9 @@ module.exports = grammar({
     //   const Op = enum { Nop, Jp(u16) };
     //   const BoxI32 = Box(i32);
     //   const KMAX: u32 = 64;
+    //   pub const Timer = struct { ... };
     const_declaration: $ => seq(
+      optional(field('modifier', 'pub')),
       'const',
       field('name', $.identifier),
       optional(seq(':', field('type', $._type))),
