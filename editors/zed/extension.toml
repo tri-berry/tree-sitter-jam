@@ -8,4 +8,4 @@ repository = "https://github.com/tri-berry/tree-sitter-jam"
 
 [grammars.jam]
 repository = "https://github.com/tri-berry/tree-sitter-jam"
-rev = "689fb9857e7014e8867008fa514804d31172d1a8"
+rev = "05229ae0a4f9d261818f4939c72dcb638df522cb"
