@@ -1,5 +1,29 @@
 # tree-sitter-jam
 
+[![crates.io](https://img.shields.io/crates/v/tree-sitter-jam.svg)](https://crates.io/crates/tree-sitter-jam)
+
+Tree-sitter grammar for the [Jam](https://github.com/raphamorim/jam) programming language.
+
+## Using from Rust
+
+The grammar is published on crates.io as [`tree-sitter-jam`](https://crates.io/crates/tree-sitter-jam). Add it to your `Cargo.toml`:
+
+```toml
+[dependencies]
+tree-sitter = "0.25"
+tree-sitter-jam = "0.1"
+```
+
+Then load the language and parse Jam source:
+
+```rust
+let mut parser = tree_sitter::Parser::new();
+parser.set_language(&tree_sitter_jam::LANGUAGE.into()).expect("load Jam grammar");
+let tree = parser.parse("const MAX: u32 = 64;", None).unwrap();
+```
+
+Highlight queries live in [`queries/highlights.scm`](queries/highlights.scm) and are bundled into the crate via `include` in `Cargo.toml`.
+
 ## Installing in Zed
 
 The Zed extension lives in [`editors/zed/`](editors/zed) — a language-only extension that references this grammar over git. (Install the `editors/zed/` folder, **not** the repo root: Zed sees the root `Cargo.toml` and tries to build a Rust extension, which fails.)

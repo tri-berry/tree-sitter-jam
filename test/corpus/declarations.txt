@@ -306,6 +306,41 @@ const FileMaybe = Maybe(File);
         (identifier)))))
 
 ================================================================================
+Pub const struct (re-exported type)
+================================================================================
+
+pub const Timer = struct {
+    hblank: u32,
+    prevHblank: u32,
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    name: (identifier)
+    value: (struct_definition
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type))
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type)))))
+
+================================================================================
+Pub const import (re-export)
+================================================================================
+
+pub const std = import("std");
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_declaration
+    name: (identifier)
+    path: (string_literal)))
+
+================================================================================
 Generic type-returning function
 ================================================================================
 
