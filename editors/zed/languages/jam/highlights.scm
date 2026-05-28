@@ -13,19 +13,20 @@
   "return"
   "break"
   "continue"
+  "match"
   "import"
   "extern"
   "export"
   "pub"
-  "mut"
-  "move"
-  "match"
   "as"
   "struct"
-  "enum"
   "union"
+  "enum"
+  "mut"
+  "move"
 ] @keyword
 
+; Logical operator keywords
 [
   "and"
   "or"
@@ -33,13 +34,22 @@
 
 ; Types
 (primitive_type) @type
+(named_type (identifier) @type)
+(generic_type name: (identifier) @type)
 
-; Boolean literals
+; Pointer / slice / array type punctuation
+(pointer_type
+  qualifier: _ @keyword)
+
+; Boolean and other constants
 (boolean_literal) @constant.builtin
 
 ; Function definitions
 (function_declaration
   name: (identifier) @function)
+
+(method_declaration
+  (function_declaration name: (identifier) @function.method))
 
 ; Function calls
 (call_expression
@@ -57,11 +67,22 @@
 (variable_declaration
   name: (identifier) @variable)
 
-; Member access
+; Field declarations and struct-literal fields
+(field_declaration
+  name: (identifier) @property)
+(struct_literal_field
+  name: (identifier) @property)
+
+; Member access (read)
 (member_expression
   member: (identifier) @property)
 
-; Import names
+; Enum variants in patterns
+(enum_variant_pattern
+  enum: (identifier) @type
+  variant: (identifier) @constructor)
+
+; Imports
 (import_declaration
   name: (identifier) @namespace)
 
@@ -69,6 +90,14 @@
 [
   "+"
   "-"
+  "*"
+  "%"
+  "&"
+  "|"
+  "^"
+  "~"
+  "<<"
+  ">>"
   "=="
   "!="
   "<"
@@ -76,6 +105,8 @@
   ">"
   ">="
   "="
+  "!"
+  "..="
 ] @operator
 
 ; Punctuation
@@ -99,6 +130,12 @@
 (number_literal) @number
 (string_literal) @string
 (escape_sequence) @string.escape
+
+; Wildcard pattern
+(wildcard_pattern) @character.special
+
+; Variadic marker
+(variadic_parameter) @punctuation.special
 
 ; Comments
 (line_comment) @comment

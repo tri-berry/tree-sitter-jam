@@ -2,6 +2,7 @@
 [
   "fn"
   "tfn"
+  "cfn"
   "const"
   "var"
   "if"
